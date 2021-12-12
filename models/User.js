@@ -6,29 +6,25 @@ const UserSchema = new Schema(
     userName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      unique: true
     },
-    createdBy: {
+    email: {
       type: String,
       required: true,
-      trim: true
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+      unique: true
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-      get: createdAtVal => dateFormat(createdAtVal)
-    },
-    size: {
-      type: String,
-      required: true,
-      enum: ['Personal', 'Small', 'Medium', 'Large', 'Extra Large'],
-      default: 'Large'
-    },
-    toppings: [],
     thoughts: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Thought'
+      }
+    ],
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
       }
     ]
   },
@@ -49,6 +45,7 @@ UserSchema.virtual('thoughtCount').get(function() {
     0
   );
 });
+// Create a virtual called friendCount that retrieves the length of the user's friends array field on query.
 
 const User = model('User', UserSchema);
 
